@@ -3,6 +3,7 @@ import cors from '@fastify/cors'
 import cookie from '@fastify/cookie'
 import helmet from '@fastify/helmet'
 import rateLimit from '@fastify/rate-limit'
+import authPlugin from './plugins/auth'
 
 const app = Fastify({
   logger: {
@@ -35,6 +36,9 @@ async function bootstrap() {
     max: 100,
     timeWindow: '1 minute',
   })
+
+  // ── Auth plugin (session verification from NextAuth DB) ───────────────────
+  await app.register(authPlugin)
 
   // ── Health check ──────────────────────────────────────────────────────────
   app.get('/api/health', async () => ({ status: 'ok', ts: new Date().toISOString() }))

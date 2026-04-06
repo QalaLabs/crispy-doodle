@@ -17,7 +17,7 @@ datasource db {
 
 model Account {
   id                String  @id @default(cuid())
-  userId            Int
+  userId            String
   type              String
   provider          String
   providerAccountId String
@@ -36,7 +36,7 @@ model Account {
 model Session {
   id           String   @id @default(cuid())
   sessionToken String   @unique
-  userId       Int
+  userId       String
   expires      DateTime
   user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
@@ -54,13 +54,14 @@ model VerificationToken {
 // ─────────────────────────────────────────────────────────────
 
 model User {
-  id          Int      @id @default(autoincrement())
-  email       String   @unique
+  id            String    @id @default(cuid())
+  email         String    @unique
   emailVerified DateTime?
-  name        String?
-  image       String?
-  googleId    String?  @unique
-  role        String   @default("user") // "user" | "admin"
+  name          String?
+  image         String?
+  passwordHash  String?   @db.Text
+  googleId      String?   @unique
+  role          String    @default("user") // "user" | "admin"
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
@@ -85,7 +86,7 @@ model User {
 
 model Profile {
   id              Int      @id @default(autoincrement())
-  userId          Int      @unique
+  userId          String   @unique
   user            User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   timezone        String   @default("Asia/Kolkata")
   avatarUrl       String?
@@ -103,7 +104,7 @@ model Profile {
 
 model Consent {
   id        Int      @id @default(autoincrement())
-  userId    Int
+  userId    String
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   key       String   // e.g. "tracking", "health_sync", "marketing", "ai_personalization"
   value     Boolean
@@ -120,7 +121,7 @@ model Consent {
 
 model Journal {
   id        Int      @id @default(autoincrement())
-  userId    Int
+  userId    String
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   title     String?
   body      String   @db.Text
@@ -150,7 +151,7 @@ model DailyDose {
 
 model DailyDoseCompletion {
   id          Int       @id @default(autoincrement())
-  userId      Int
+  userId      String
   user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
   doseId      Int
   dose        DailyDose @relation(fields: [doseId], references: [id])
@@ -166,7 +167,7 @@ model DailyDoseCompletion {
 // P_t = 0.35·S_t + 0.30·A_t + 0.25·J_t + 0.10·W_t
 model ProgressSnapshot {
   id             Int      @id @default(autoincrement())
-  userId         Int
+  userId         String
   user           User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   date           DateTime @db.Date
   score          Float    // overall P_t 0–100
@@ -185,7 +186,7 @@ model ProgressSnapshot {
 
 model Achievement {
   id       Int      @id @default(autoincrement())
-  userId   Int
+  userId   String
   user     User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   key      String   // "FIRST_JOURNAL" | "7_DAY_STREAK" | "SLEEP_IMPROVED" | "PROGRESS_50" | "PROGRESS_75"
   metadata Json?    // optional extra context
@@ -200,7 +201,7 @@ model Achievement {
 
 model HealthSync {
   id                   Int      @id @default(autoincrement())
-  userId               Int
+  userId               String
   user                 User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   provider             String   // "google-fit" | "health-connect"
   encryptedAccessToken String?  @db.Text
@@ -215,7 +216,7 @@ model HealthSync {
 
 model HealthMetric {
   id             Int      @id @default(autoincrement())
-  userId         Int
+  userId         String
   user           User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   metricDate     DateTime @db.Date
   sleepMinutes   Int?
@@ -253,7 +254,7 @@ model Product {
 
 model Order {
   id               Int       @id @default(autoincrement())
-  userId           Int?
+  userId           String?
   user             User?     @relation(fields: [userId], references: [id])
   status           String    @default("PENDING")
   // PENDING → PAID → FULFILLED → SHIPPED → DELIVERED | CANCELLED | REFUNDED
@@ -317,7 +318,7 @@ model Module {
 
 model Enrolment {
   id         Int      @id @default(autoincrement())
-  userId     Int
+  userId     String
   user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   courseId   Int
   course     Course   @relation(fields: [courseId], references: [id])
@@ -328,7 +329,7 @@ model Enrolment {
 
 model CourseProgress {
   id          Int       @id @default(autoincrement())
-  userId      Int
+  userId      String
   user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
   moduleId    Int
   module      Module    @relation(fields: [moduleId], references: [id])
@@ -345,7 +346,7 @@ model CourseProgress {
 model Event {
   id        Int      @id @default(autoincrement())
   eventId   String   @unique @default(cuid())
-  userId    Int?
+  userId    String?
   user      User?    @relation(fields: [userId], references: [id])
   eventName String
   // e.g. "journal.created" | "daily_dose.completed" | "purchase" | "sign_up"

@@ -2,7 +2,7 @@
 export interface EventEnvelope {
   event_id: string
   event_name: EventName
-  user_id?: number
+  user_id?: string
   source: 'client' | 'server'
   timestamp: string // ISO 8601
   payload: Record<string, unknown>
