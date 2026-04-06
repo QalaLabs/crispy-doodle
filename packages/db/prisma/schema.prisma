@@ -1,0 +1,356 @@
+// Aumveda — canonical Prisma schema
+// DB: PostgreSQL (Neon.tech / Supabase)
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ─────────────────────────────────────────────────────────────
+// NextAuth required models
+// ─────────────────────────────────────────────────────────────
+
+model Account {
+  id                String  @id @default(cuid())
+  userId            Int
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String? @db.Text
+  access_token      String? @db.Text
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String? @db.Text
+  session_state     String?
+  user              User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       Int
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+}
+
+// ─────────────────────────────────────────────────────────────
+// Core user models
+// ─────────────────────────────────────────────────────────────
+
+model User {
+  id          Int      @id @default(autoincrement())
+  email       String   @unique
+  emailVerified DateTime?
+  name        String?
+  image       String?
+  googleId    String?  @unique
+  role        String   @default("user") // "user" | "admin"
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // NextAuth relations
+  accounts    Account[]
+  sessions    Session[]
+
+  // App relations
+  profile     Profile?
+  journals    Journal[]
+  orders      Order[]
+  achievements Achievement[]
+  consents    Consent[]
+  healthSyncs HealthSync[]
+  healthMetrics HealthMetric[]
+  dailyDoseCompletions DailyDoseCompletion[]
+  progressSnapshots ProgressSnapshot[]
+  enrolments  Enrolment[]
+  courseProgress CourseProgress[]
+  events      Event[]
+}
+
+model Profile {
+  id              Int      @id @default(autoincrement())
+  userId          Int      @unique
+  user            User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  timezone        String   @default("Asia/Kolkata")
+  avatarUrl       String?
+  bio             String?  @db.Text
+  progress        Float    @default(0)   // latest P_t value 0–100
+  streakDays      Int      @default(0)
+  onboardingDone  Boolean  @default(false)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+}
+
+// ─────────────────────────────────────────────────────────────
+// Consent
+// ─────────────────────────────────────────────────────────────
+
+model Consent {
+  id        Int      @id @default(autoincrement())
+  userId    Int
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  key       String   // e.g. "tracking", "health_sync", "marketing", "ai_personalization"
+  value     Boolean
+  version   String   // policy version: "v1", "v2" etc.
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([userId, key])
+}
+
+// ─────────────────────────────────────────────────────────────
+// Journals
+// ─────────────────────────────────────────────────────────────
+
+model Journal {
+  id        Int      @id @default(autoincrement())
+  userId    Int
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  title     String?
+  body      String   @db.Text
+  images    String[] // array of R2 image URLs
+  mood      Int?     // 1–10
+  isDeleted Boolean  @default(false)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+// ─────────────────────────────────────────────────────────────
+// Daily Dose
+// ─────────────────────────────────────────────────────────────
+
+model DailyDose {
+  id          Int      @id @default(autoincrement())
+  title       String
+  audioKey    String   // R2 object key (not full URL — presign at request time)
+  promptText  String   @db.Text
+  durationSec Int
+  isActive    Boolean  @default(true)
+  publishDate DateTime
+  createdAt   DateTime @default(now())
+
+  completions DailyDoseCompletion[]
+}
+
+model DailyDoseCompletion {
+  id          Int       @id @default(autoincrement())
+  userId      Int
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  doseId      Int
+  dose        DailyDose @relation(fields: [doseId], references: [id])
+  completedAt DateTime  @default(now())
+
+  @@unique([userId, doseId])
+}
+
+// ─────────────────────────────────────────────────────────────
+// Progress Engine
+// ─────────────────────────────────────────────────────────────
+
+// P_t = 0.35·S_t + 0.30·A_t + 0.25·J_t + 0.10·W_t
+model ProgressSnapshot {
+  id             Int      @id @default(autoincrement())
+  userId         Int
+  user           User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  date           DateTime @db.Date
+  score          Float    // overall P_t 0–100
+  sleepScore     Float    @default(50) // S_t
+  activityScore  Float    @default(0)  // A_t
+  journalScore   Float    @default(0)  // J_t
+  wellbeingScore Float    @default(50) // W_t (avg mood × 10)
+  createdAt      DateTime @default(now())
+
+  @@unique([userId, date])
+}
+
+// ─────────────────────────────────────────────────────────────
+// Achievements / Badges
+// ─────────────────────────────────────────────────────────────
+
+model Achievement {
+  id       Int      @id @default(autoincrement())
+  userId   Int
+  user     User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  key      String   // "FIRST_JOURNAL" | "7_DAY_STREAK" | "SLEEP_IMPROVED" | "PROGRESS_50" | "PROGRESS_75"
+  metadata Json?    // optional extra context
+  earnedAt DateTime @default(now())
+
+  @@unique([userId, key])
+}
+
+// ─────────────────────────────────────────────────────────────
+// Health
+// ─────────────────────────────────────────────────────────────
+
+model HealthSync {
+  id                   Int      @id @default(autoincrement())
+  userId               Int
+  user                 User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  provider             String   // "google-fit" | "health-connect"
+  encryptedAccessToken String?  @db.Text
+  encryptedRefreshToken String? @db.Text
+  tokenExpiresAt       DateTime?
+  lastSyncAt           DateTime?
+  createdAt            DateTime @default(now())
+  updatedAt            DateTime @updatedAt
+
+  @@unique([userId, provider])
+}
+
+model HealthMetric {
+  id             Int      @id @default(autoincrement())
+  userId         Int
+  user           User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  metricDate     DateTime @db.Date
+  sleepMinutes   Int?
+  sleepScore     Int?     // 0–100 derived
+  steps          Int?
+  workoutMinutes Int?
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  @@unique([userId, metricDate])
+}
+
+// ─────────────────────────────────────────────────────────────
+// E-Commerce
+// ─────────────────────────────────────────────────────────────
+
+model Product {
+  id             Int      @id @default(autoincrement())
+  sku            String   @unique
+  slug           String   @unique
+  title          String
+  description    String   @db.Text
+  priceCents     Int      // stored in paise (INR × 100)
+  currency       String   @default("INR")
+  images         String[] // R2 keys
+  inventoryCount Int      @default(0)
+  isActive       Boolean  @default(true)
+  productType    String   @default("physical") // "physical" | "course" | "digital"
+  referenceId    Int?     // courseId if productType === "course"
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  orderItems     OrderItem[]
+}
+
+model Order {
+  id               Int       @id @default(autoincrement())
+  userId           Int?
+  user             User?     @relation(fields: [userId], references: [id])
+  status           String    @default("PENDING")
+  // PENDING → PAID → FULFILLED → SHIPPED → DELIVERED | CANCELLED | REFUNDED
+  totalCents       Int
+  currency         String    @default("INR")
+  cashfreeOrderId  String?   @unique
+  cashfreePaymentId String?
+  paymentMeta      Json?
+  shippingAddress  Json?
+  trackingNumber   String?
+  createdAt        DateTime  @default(now())
+  updatedAt        DateTime  @updatedAt
+
+  items            OrderItem[]
+}
+
+model OrderItem {
+  id         Int     @id @default(autoincrement())
+  orderId    Int
+  order      Order   @relation(fields: [orderId], references: [id])
+  productId  Int
+  product    Product @relation(fields: [productId], references: [id])
+  sku        String
+  title      String
+  quantity   Int
+  priceCents Int
+}
+
+// ─────────────────────────────────────────────────────────────
+// Courses
+// ─────────────────────────────────────────────────────────────
+
+model Course {
+  id           Int      @id @default(autoincrement())
+  slug         String   @unique
+  title        String
+  description  String   @db.Text
+  thumbnailKey String?  // R2 key
+  isPaid       Boolean  @default(false)
+  priceCents   Int?
+  isPublished  Boolean  @default(false)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  modules      Module[]
+  enrolments   Enrolment[]
+}
+
+model Module {
+  id          Int     @id @default(autoincrement())
+  courseId    Int
+  course      Course  @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  title       String
+  ytVideoId   String
+  orderIndex  Int
+  durationSec Int?
+  isPreview   Boolean @default(false)
+
+  progress    CourseProgress[]
+}
+
+model Enrolment {
+  id         Int      @id @default(autoincrement())
+  userId     Int
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  courseId   Int
+  course     Course   @relation(fields: [courseId], references: [id])
+  enrolledAt DateTime @default(now())
+
+  @@unique([userId, courseId])
+}
+
+model CourseProgress {
+  id          Int       @id @default(autoincrement())
+  userId      Int
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  moduleId    Int
+  module      Module    @relation(fields: [moduleId], references: [id])
+  completedAt DateTime?
+  watchedSec  Int       @default(0)
+
+  @@unique([userId, moduleId])
+}
+
+// ─────────────────────────────────────────────────────────────
+// Server-side event log (append-only)
+// ─────────────────────────────────────────────────────────────
+
+model Event {
+  id        Int      @id @default(autoincrement())
+  eventId   String   @unique @default(cuid())
+  userId    Int?
+  user      User?    @relation(fields: [userId], references: [id])
+  eventName String
+  // e.g. "journal.created" | "daily_dose.completed" | "purchase" | "sign_up"
+  // | "ai.tips.generated" | "health_sync.completed" | "cashfree.webhook.unknown"
+  payload   Json
+  source    String   @default("server") // "client" | "server"
+  forwarded Boolean  @default(false)    // true once relayed to GTM/ad platforms
+  createdAt DateTime @default(now())
+}

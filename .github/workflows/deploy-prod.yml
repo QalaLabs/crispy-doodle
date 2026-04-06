@@ -1,0 +1,55 @@
+name: Deploy — Production
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  deploy-prod:
+    name: Deploy to Hostinger Production
+    runs-on: ubuntu-latest
+    environment: production   # requires manual approval in GitHub Environments
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Build all apps
+        run: pnpm turbo run build
+        env:
+          DATABASE_URL: ${{ secrets.PROD_DATABASE_URL }}
+          NEXTAUTH_SECRET: ${{ secrets.PROD_NEXTAUTH_SECRET }}
+          NEXTAUTH_URL: ${{ secrets.PROD_NEXTAUTH_URL }}
+          NEXT_PUBLIC_API_URL: ${{ secrets.PROD_API_URL }}
+
+      - name: Run DB migrations
+        run: pnpm --filter @aumveda/db prisma migrate deploy
+        env:
+          DATABASE_URL: ${{ secrets.PROD_DATABASE_URL }}
+
+      - name: Deploy via SSH
+        uses: appleboy/ssh-action@v1
+        with:
+          host: ${{ secrets.PROD_SSH_HOST }}
+          username: ${{ secrets.PROD_SSH_USER }}
+          key: ${{ secrets.PROD_SSH_KEY }}
+          script: |
+            cd ~/aumveda
+            git pull origin main
+            pnpm install --frozen-lockfile --prod
+            pm2 restart aumveda-api aumveda-web aumveda-admin --update-env
+            pm2 save
