@@ -9,7 +9,7 @@ import bcrypt from 'bcryptjs'
 export const authOptions: NextAuthOptions = {
   adapter: PrismaAdapter(prisma),
   session: {
-    strategy: 'database',
+    strategy: 'jwt',
     maxAge: 30 * 24 * 60 * 60, // 30 days
   },
   pages: {
@@ -57,16 +57,23 @@ export const authOptions: NextAuthOptions = {
     }),
   ],
   callbacks: {
-    async session({ session, user }) {
-      if (session.user && user) {
-        session.user.id = user.id
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        session.user.role = (user as any).role ?? 'user'
+    async jwt({ token, user }) {
+      // On first sign-in, `user` is populated — persist id and role into the token
+      if (user) {
+        token.id = user.id
+        token.role = (user as { role?: 'user' | 'admin' }).role ?? 'user'
+      }
+      return token
+    },
+    async session({ session, token }) {
+      if (session.user) {
+        session.user.id = token.id as string
+        session.user.role = (token.role as 'user' | 'admin') ?? 'user'
       }
       return session
     },
     async signIn({ user, account }) {
-      // Ensure a Profile row exists for new users
+      // Ensure a Profile row exists for OAuth / email sign-ins
       if (account?.type === 'oauth' || account?.type === 'email') {
         const existing = await prisma.profile.findUnique({ where: { userId: user.id } })
         if (!existing) {

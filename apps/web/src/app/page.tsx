@@ -12,10 +12,8 @@ export default function HomePage() {
       <nav className="flex items-center justify-between px-6 py-5 max-w-6xl mx-auto">
         <span className="font-serif text-2xl font-semibold text-brand-700">Aumveda</span>
         <div className="flex items-center gap-4">
-          <Link href="/shop" className="text-sm text-stone-600 hover:text-brand-600 transition-colors">Shop</Link>
-          <Link href="/courses" className="text-sm text-stone-600 hover:text-brand-600 transition-colors">Courses</Link>
-          <Link href="/auth/login" className="btn-secondary text-xs px-4 py-2">Sign In</Link>
-          <Link href="/auth/register" className="btn-primary text-xs px-4 py-2">Get Started</Link>
+          <Link href="/auth/login" className="text-sm text-stone-600 hover:text-brand-600 transition-colors border border-stone-200 rounded-xl px-4 py-2">Sign In</Link>
+          <Link href="/auth/register" className="text-sm bg-brand-500 hover:bg-brand-600 text-white rounded-xl px-4 py-2 transition-colors">Get Started</Link>
         </div>
       </nav>
 
@@ -33,11 +31,11 @@ export default function HomePage() {
           woven together to support your mind, body, and spirit.
         </p>
         <div className="flex items-center justify-center gap-4 flex-wrap">
-          <Link href="/auth/register" className="btn-primary">
+          <Link href="/auth/register" className="bg-brand-500 hover:bg-brand-600 text-white font-medium rounded-xl px-6 py-3 transition-colors">
             Begin Your Journey
           </Link>
-          <Link href="/about" className="btn-secondary">
-            Learn More
+          <Link href="/auth/login" className="border border-stone-200 text-stone-700 hover:border-stone-300 font-medium rounded-xl px-6 py-3 transition-colors">
+            Sign In
           </Link>
         </div>
       </section>
@@ -49,7 +47,7 @@ export default function HomePage() {
           { title: 'Progress Engine', desc: 'Your personal healing score — built from sleep, activity, and journal entries.', icon: '📈' },
           { title: 'AI Quick Tips', desc: 'Personalised micro-interventions grounded in CBT, delivered when you need them.', icon: '✨' },
         ].map((f) => (
-          <div key={f.title} className="card text-center">
+          <div key={f.title} className="bg-white/70 backdrop-blur-sm border border-stone-100 rounded-2xl p-6 text-center">
             <div className="text-4xl mb-3">{f.icon}</div>
             <h3 className="font-serif text-xl font-medium text-stone-800 mb-2">{f.title}</h3>
             <p className="text-sm text-stone-500">{f.desc}</p>

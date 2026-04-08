@@ -1,6 +1,5 @@
 import type { FastifyPluginAsync, FastifyRequest, FastifyReply } from 'fastify'
 import fp from 'fastify-plugin'
-import { prisma } from '@aumveda/db'
 
 declare module 'fastify' {
   interface FastifyRequest {
@@ -13,31 +12,40 @@ declare module 'fastify' {
 }
 
 /**
- * Verifies a NextAuth session token by looking it up in the DB.
- * NextAuth stores session tokens in the `Session` table when strategy = "database".
- * The token arrives in the `next-auth.session-token` cookie.
+ * Verifies a NextAuth JWT session (JWE) from the session cookie.
+ * NextAuth v4 with strategy:'jwt' encrypts tokens using AES-GCM with a key
+ * derived from NEXTAUTH_SECRET via HKDF. Uses dynamic imports for ESM-only deps.
  */
 const authPlugin: FastifyPluginAsync = async (app) => {
   app.decorateRequest('sessionUser', null)
 
   app.addHook('preHandler', async (request: FastifyRequest) => {
+    const secret = process.env.NEXTAUTH_SECRET
+    if (!secret) return
+
     const token =
       request.cookies['next-auth.session-token'] ??
       request.cookies['__Secure-next-auth.session-token']
 
     if (!token) return
 
-    const session = await prisma.session.findUnique({
-      where: { sessionToken: token },
-      select: {
-        expires: true,
-        user: { select: { id: true, email: true, role: true } },
-      },
-    })
+    try {
+      const { hkdf } = await import('@panva/hkdf')
+      const { jwtDecrypt } = await import('jose')
 
-    if (!session || session.expires < new Date()) return
+      const encryptionKey = await hkdf('sha256', secret, '', 'NextAuth.js Generated Encryption Key', 32)
+      const { payload } = await jwtDecrypt(token, encryptionKey, { clockTolerance: 15 })
 
-    request.sessionUser = session.user
+      if (payload.sub && payload.email) {
+        request.sessionUser = {
+          id: payload.sub,
+          email: payload.email as string,
+          role: (payload.role as string) ?? 'user',
+        }
+      }
+    } catch {
+      // Invalid or expired token — leave sessionUser as null
+    }
   })
 }
 
