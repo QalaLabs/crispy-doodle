@@ -126,7 +126,8 @@ model Journal {
   title     String?
   body      String   @db.Text
   images    String[] // array of R2 image URLs
-  mood      Int?     // 1–10
+  mood      Int?     // 1–5 (1=difficult, 5=great)
+  tags      String[] // user-defined tags
   isDeleted Boolean  @default(false)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
