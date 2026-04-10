@@ -1,20 +1,11 @@
 import type { Metadata } from 'next'
-import { Inter, Cormorant_Garamond } from 'next/font/google'
+import { Playfair_Display, Montserrat, Lato } from 'next/font/google'
 import './globals.css'
 import { Providers } from './providers'
 
-const inter = Inter({
-  subsets: ['latin'],
-  variable: '--font-inter',
-  display: 'swap',
-})
-
-const cormorant = Cormorant_Garamond({
-  subsets: ['latin'],
-  weight: ['300', '400', '500', '600', '700'],
-  variable: '--font-cormorant',
-  display: 'swap',
-})
+const playfair = Playfair_Display({ subsets: ['latin'], variable: '--font-serif', display: 'swap' })
+const montserrat = Montserrat({ subsets: ['latin'], variable: '--font-sans', display: 'swap' })
+const lato = Lato({ subsets: ['latin'], weight: ['400', '700'], variable: '--font-body', display: 'swap' })
 
 export const metadata: Metadata = {
   title: {
@@ -45,8 +36,8 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" className={`${inter.variable} ${cormorant.variable}`}>
-      <body className="bg-cream text-stone-800 antialiased">
+    <html lang="en" className={`${playfair.variable} ${montserrat.variable} ${lato.variable}`}>
+      <body className="antialiased">
         <Providers>{children}</Providers>
       </body>
     </html>

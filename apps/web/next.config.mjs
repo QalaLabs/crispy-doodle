@@ -2,6 +2,9 @@
 const nextConfig = {
   reactStrictMode: true,
 
+  // Prevent Next.js from bundling Prisma — let Node.js require it at runtime
+  serverExternalPackages: ['@prisma/client', '@aumveda/db'],
+
   images: {
     remotePatterns: [
       { protocol: 'https', hostname: '**.r2.cloudflarestorage.com' },

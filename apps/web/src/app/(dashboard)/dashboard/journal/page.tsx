@@ -1,6 +1,4 @@
-import { getServerSession } from 'next-auth'
-import { authOptions } from '@/lib/auth'
-import { redirect } from 'next/navigation'
+import { requireSession } from '@/lib/session'
 import { prisma } from '@aumveda/db'
 import Topbar from '../../_components/Topbar'
 import Link from 'next/link'
@@ -11,8 +9,7 @@ const MOOD_EMOJI: Record<number, string> = { 5: '😄', 4: '🙂', 3: '😐', 2:
 const MOOD_LABEL: Record<number, string> = { 5: 'Great', 4: 'Good', 3: 'Okay', 2: 'Low', 1: 'Difficult' }
 
 export default async function JournalListPage() {
-  const session = await getServerSession(authOptions)
-  if (!session?.user?.id) redirect('/auth/login')
+  const session = await requireSession()
 
   const journals = await prisma.journal.findMany({
     where: { userId: session.user.id },

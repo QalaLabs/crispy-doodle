@@ -1,6 +1,4 @@
-import { getServerSession } from 'next-auth'
-import { authOptions } from '@/lib/auth'
-import { redirect } from 'next/navigation'
+import { requireSession } from '@/lib/session'
 import { prisma } from '@aumveda/db'
 import Topbar from '../../_components/Topbar'
 import SettingsForm from './_components/SettingsForm'
@@ -8,8 +6,7 @@ import SettingsForm from './_components/SettingsForm'
 export const metadata = { title: 'Settings' }
 
 export default async function SettingsPage() {
-  const session = await getServerSession(authOptions)
-  if (!session?.user?.id) redirect('/auth/login')
+  const session = await requireSession()
 
   const user = await prisma.user.findUnique({
     where: { id: session.user.id },

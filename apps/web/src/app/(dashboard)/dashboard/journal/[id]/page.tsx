@@ -1,6 +1,5 @@
-import { getServerSession } from 'next-auth'
-import { authOptions } from '@/lib/auth'
-import { redirect, notFound } from 'next/navigation'
+import { requireSession } from '@/lib/session'
+import { notFound } from 'next/navigation'
 import { prisma } from '@aumveda/db'
 import Topbar from '../../../_components/Topbar'
 import JournalEditor from '../_components/JournalEditor'
@@ -9,8 +8,7 @@ import Link from 'next/link'
 export const metadata = { title: 'Journal Entry' }
 
 export default async function JournalDetailPage({ params }: { params: { id: string } }) {
-  const session = await getServerSession(authOptions)
-  if (!session?.user?.id) redirect('/auth/login')
+  const session = await requireSession()
 
   const id = parseInt(params.id)
   if (isNaN(id)) notFound()

@@ -1,6 +1,4 @@
-import { getServerSession } from 'next-auth'
-import { authOptions } from '@/lib/auth'
-import { redirect } from 'next/navigation'
+import { requireSession } from '@/lib/session'
 import { prisma } from '@aumveda/db'
 import Topbar from '../../_components/Topbar'
 import DailyDoseList from '@/components/DailyDoseList'
@@ -8,8 +6,7 @@ import DailyDoseList from '@/components/DailyDoseList'
 export const metadata = { title: 'Daily Dose' }
 
 export default async function DosePage() {
-  const session = await getServerSession(authOptions)
-  if (!session?.user?.id) redirect('/auth/login')
+  const session = await requireSession()
 
   const todayDose = await prisma.dailyDose.findFirst({
     where: { isActive: true, publishDate: { lte: new Date() } },

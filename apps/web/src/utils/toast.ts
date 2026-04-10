@@ -1,13 +1,17 @@
-// Simple toast helpers — wired to console in server context, browser toast in client
-export function showSuccess(message: string) {
-  if (typeof window !== 'undefined') {
-    // Will be replaced with sonner/react-hot-toast once installed
-    console.log('[toast:success]', message)
-  }
-}
+import { toast } from "sonner";
 
-export function showError(message: string) {
-  if (typeof window !== 'undefined') {
-    console.error('[toast:error]', message)
-  }
-}
+export const showSuccess = (message: string) => {
+  toast.success(message);
+};
+
+export const showError = (message: string) => {
+  toast.error(message);
+};
+
+export const showLoading = (message: string) => {
+  return toast.loading(message);
+};
+
+export const dismissToast = (toastId: string) => {
+  toast.dismiss(toastId);
+};

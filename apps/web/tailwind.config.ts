@@ -1,55 +1,63 @@
-import type { Config } from 'tailwindcss'
-
-const config: Config = {
-  content: [
-    './src/pages/**/*.{js,ts,jsx,tsx,mdx}',
-    './src/components/**/*.{js,ts,jsx,tsx,mdx}',
-    './src/app/**/*.{js,ts,jsx,tsx,mdx}',
-  ],
+import type { Config } from "tailwindcss";
+export default {
+  darkMode: ["class"],
+  content: ["./src/**/*.{ts,tsx}"],
   theme: {
+    container: { center: true, padding: "2rem", screens: { "2xl": "1400px" } },
     extend: {
-      colors: {
-        // Aumveda brand palette — earthy, calming
-        brand: {
-          50:  '#f5f0eb',
-          100: '#e8ddd2',
-          200: '#d4bea8',
-          300: '#be9d7c',
-          400: '#a97c55',
-          500: '#8b5e38', // primary warm brown
-          600: '#704a2a',
-          700: '#56381f',
-          800: '#3d2814',
-          900: '#261808',
-        },
-        sage: {
-          50:  '#f2f5f0',
-          100: '#e0e9db',
-          200: '#c3d4b9',
-          300: '#a3bc96',
-          400: '#82a372',
-          500: '#638a52', // primary sage green
-          600: '#4e6e40',
-          700: '#3b5330',
-          800: '#283921',
-          900: '#172113',
-        },
-        cream: '#faf6f0',
-        parchment: '#f2ead9',
-      },
       fontFamily: {
-        sans: ['var(--font-inter)', 'system-ui', 'sans-serif'],
-        serif: ['var(--font-cormorant)', 'Georgia', 'serif'],
+        serif: ['"Playfair Display"', "serif"],
+        sans: ['"Montserrat"', "sans-serif"],
+        body: ['"Lato"', "sans-serif"],
+      },
+      colors: {
+        border: "hsl(var(--border))",
+        input: "hsl(var(--input))",
+        ring: "hsl(var(--ring))",
+        background: "hsl(var(--background))",
+        foreground: "hsl(var(--foreground))",
+        primary: { DEFAULT: "hsl(var(--primary))", foreground: "hsl(var(--primary-foreground))" },
+        secondary: { DEFAULT: "hsl(var(--secondary))", foreground: "hsl(var(--secondary-foreground))" },
+        destructive: { DEFAULT: "hsl(var(--destructive))", foreground: "hsl(var(--destructive-foreground))" },
+        muted: { DEFAULT: "hsl(var(--muted))", foreground: "hsl(var(--muted-foreground))" },
+        accent: { DEFAULT: "hsl(var(--accent))", foreground: "hsl(var(--accent-foreground))" },
+        popover: { DEFAULT: "hsl(var(--popover))", foreground: "hsl(var(--popover-foreground))" },
+        card: { DEFAULT: "hsl(var(--card))", foreground: "hsl(var(--card-foreground))" },
+        // keep existing brand aliases for backward compat
+        brand: {
+          50: "hsl(174 71% 97%)",
+          100: "hsl(174 60% 90%)",
+          300: "hsl(174 55% 60%)",
+          400: "hsl(174 60% 40%)",
+          500: "hsl(174 71% 21%)",
+          600: "hsl(174 75% 17%)",
+        },
+        parchment: "hsl(40 30% 97%)",
+        cream: "hsl(40 30% 97%)",
+        sage: {
+          500: "hsl(120 20% 50%)",
+        },
       },
       borderRadius: {
-        '4xl': '2rem',
+        lg: "var(--radius)",
+        md: "calc(var(--radius) - 2px)",
+        sm: "calc(var(--radius) - 4px)",
       },
-      backgroundImage: {
-        'gradient-brand': 'linear-gradient(135deg, #f5f0eb 0%, #e8ddd2 100%)',
+      keyframes: {
+        "fade-in": { "0%": { opacity: "0" }, "100%": { opacity: "1" } },
+        "slide-up": { "0%": { transform: "translateY(20px)", opacity: "0" }, "100%": { transform: "translateY(0)", opacity: "1" } },
+        "slow-zoom": { "0%": { transform: "scale(1)" }, "100%": { transform: "scale(1.1)" } },
+        "accordion-down": { from: { height: "0" }, to: { height: "var(--radix-accordion-content-height)" } },
+        "accordion-up": { from: { height: "var(--radix-accordion-content-height)" }, to: { height: "0" } },
+      },
+      animation: {
+        "fade-in": "fade-in 1s ease-out forwards",
+        "slide-up": "slide-up 0.8s ease-out forwards",
+        "slow-zoom": "slow-zoom 20s linear infinite alternate",
+        "accordion-down": "accordion-down 0.2s ease-out",
+        "accordion-up": "accordion-up 0.2s ease-out",
       },
     },
   },
-  plugins: [],
-}
-
-export default config
+  plugins: [require("tailwindcss-animate")],
+} satisfies Config;

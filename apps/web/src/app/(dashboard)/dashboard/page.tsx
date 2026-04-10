@@ -1,5 +1,4 @@
-import { getServerSession } from 'next-auth'
-import { authOptions } from '@/lib/auth'
+import { requireSession } from '@/lib/session'
 import { redirect } from 'next/navigation'
 import { prisma } from '@aumveda/db'
 import Topbar from '../_components/Topbar'
@@ -11,8 +10,7 @@ import TodayDoseCard from './_components/TodayDoseCard'
 export const metadata = { title: 'Dashboard' }
 
 export default async function DashboardPage() {
-  const session = await getServerSession(authOptions)
-  if (!session?.user?.id) redirect('/auth/login')
+  const session = await requireSession()
 
   const [profile, recentJournals, todayDose] = await Promise.all([
     prisma.profile.findUnique({
