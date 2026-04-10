@@ -22,18 +22,18 @@ const Navigation = () => {
 
   const navItems = [
     { icon: LayoutDashboard, label: 'Dashboard', path: '/dashboard' },
-    { icon: CalendarCheck, label: 'Routine', path: '/routine' },
-    { icon: Utensils, label: 'Food Guide', path: '/food-guide' },
-    { icon: BookOpen, label: 'Courses', path: '/courses' },
-    { icon: History, label: 'Journal', path: '/journal' },
-    { icon: Activity, label: 'Timeline', path: '/activity' },
-    { icon: ShoppingBag, label: 'Shop', path: '/shop' },
-    { icon: Package, label: 'Orders', path: '/orders' },
-    { icon: User, label: 'Profile', path: '/profile' },
+    { icon: CalendarCheck, label: 'Routine', path: '/dashboard/routine' },
+    { icon: Utensils, label: 'Food Guide', path: '/dashboard/food-guide' },
+    { icon: BookOpen, label: 'Courses', path: '/dashboard/courses' },
+    { icon: History, label: 'Journal', path: '/dashboard/journal' },
+    { icon: Activity, label: 'Timeline', path: '/dashboard/activity' },
+    { icon: ShoppingBag, label: 'Shop', path: '/dashboard/shop' },
+    { icon: Package, label: 'Orders', path: '/dashboard/orders' },
+    { icon: User, label: 'Profile', path: '/dashboard/profile' },
   ];
 
   return (
-    <nav className="fixed bottom-0 left-0 right-0 bg-white/80 backdrop-blur-lg border-t border-slate-100 px-4 pb-safe pt-3 flex justify-between items-center z-50 md:relative md:flex-col md:h-screen md:w-64 md:border-t-0 md:border-r md:p-8 md:justify-start md:gap-8 md:bg-white">
+    <nav className="fixed bottom-0 left-0 right-0 bg-white/80 backdrop-blur-lg border-t border-slate-100 px-4 pb-safe pt-3 flex justify-between items-center z-50 md:sticky md:top-0 md:flex-col md:h-screen md:w-64 md:shrink-0 md:border-t-0 md:border-r md:p-8 md:justify-start md:gap-8 md:bg-white md:overflow-y-auto">
       <div className="hidden md:flex items-center gap-3 mb-8">
         <div className="w-12 h-12 bg-slate-900 rounded-xl flex items-center justify-center shadow-md overflow-hidden border border-slate-100">
           <img src="/logo.png" alt="Aumveda Logo" className="w-full h-full object-cover" />
@@ -44,7 +44,9 @@ const Navigation = () => {
       <div className="flex w-full justify-between md:flex-col md:gap-2 overflow-x-auto md:overflow-visible scrollbar-hide pb-2 md:pb-0">
         {navItems.map((item) => {
           const Icon = item.icon;
-          const isActive = pathname === item.path;
+          const isActive = item.path === '/dashboard'
+            ? pathname === '/dashboard'
+            : pathname === item.path || pathname.startsWith(item.path + '/');
 
           return (
             <Link
