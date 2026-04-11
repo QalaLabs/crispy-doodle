@@ -1,8 +1,9 @@
 "use client"
 
 import PublicNavigation from '@/components/PublicNavigation'
+import Image from 'next/image'
 import Link from 'next/link'
-import { Sparkles, Mail, Phone, MapPin, Globe, PlayCircle } from 'lucide-react'
+import { Mail, Phone, MapPin, Globe, PlayCircle } from 'lucide-react'
 
 export default function PublicLayout({ children }: { children: React.ReactNode }) {
   return (
@@ -15,8 +16,8 @@ export default function PublicLayout({ children }: { children: React.ReactNode }
             {/* Brand */}
             <div className="lg:col-span-2 space-y-6">
               <div className="flex items-center gap-3">
-                <div className="w-12 h-12 bg-white/5 rounded-xl flex items-center justify-center border border-white/10">
-                  <Sparkles className="w-6 h-6 text-amber-400" />
+                <div className="w-12 h-12 rounded-xl overflow-hidden bg-white flex items-center justify-center">
+                  <Image src="/logo.png" alt="Aumveda" width={48} height={48} className="object-contain w-10 h-10" />
                 </div>
                 <span className="text-2xl font-serif font-bold">Aumveda</span>
               </div>

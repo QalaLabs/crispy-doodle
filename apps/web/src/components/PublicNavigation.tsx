@@ -3,8 +3,9 @@
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import Image from "next/image";
 import { Button } from "@/components/ui/button";
-import { Menu, X, User, Sparkles } from "lucide-react";
+import { Menu, X, User } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const PublicNavigation = () => {
@@ -37,8 +38,8 @@ const PublicNavigation = () => {
     )}>
       <div className="max-w-7xl mx-auto flex items-center justify-between">
         <Link href="/" className="flex items-center gap-3 group">
-          <div className="w-12 h-12 bg-slate-900 rounded-xl flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform overflow-hidden">
-            <Sparkles className="text-amber-400 w-6 h-6" />
+          <div className="w-12 h-12 rounded-xl overflow-hidden shadow-lg group-hover:scale-110 transition-transform bg-white flex items-center justify-center">
+            <Image src="/logo.png" alt="Aumveda" width={48} height={48} className="object-contain w-10 h-10" />
           </div>
           <span className="text-2xl font-serif font-bold tracking-tight text-slate-900">Aumveda</span>
         </Link>
