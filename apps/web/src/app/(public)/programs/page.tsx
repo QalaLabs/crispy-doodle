@@ -1,7 +1,6 @@
 "use client";
 
 import React, { useState } from 'react';
-import PublicNavigation from "@/components/PublicNavigation";
 import StateVisualization from "@/components/StateVisualization";
 import ProgramTimeline from "@/components/ProgramTimeline";
 import { motion, AnimatePresence } from 'framer-motion';
@@ -135,8 +134,6 @@ const Programs = () => {
 
   return (
     <div className="min-h-screen bg-white">
-      <PublicNavigation />
-
       <main className="pt-32 pb-24">
         <div className="max-w-7xl mx-auto px-6 space-y-24">
           <header className="max-w-4xl space-y-8">

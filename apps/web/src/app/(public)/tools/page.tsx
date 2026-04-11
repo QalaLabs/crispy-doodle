@@ -2,7 +2,6 @@
 
 import React from 'react';
 import Link from 'next/link';
-import PublicNavigation from "@/components/PublicNavigation";
 import { Card, CardContent } from "@/components/ui/card";
 import {
   Sparkles,
@@ -67,8 +66,6 @@ const TOOLS = [
 const FreeTools = () => {
   return (
     <div className="min-h-screen bg-white">
-      <PublicNavigation />
-
       <main className="pt-32 pb-24">
         <div className="max-w-7xl mx-auto px-6 space-y-16">
           <header className="max-w-3xl space-y-6">

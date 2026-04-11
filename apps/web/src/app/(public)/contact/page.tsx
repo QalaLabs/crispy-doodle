@@ -1,7 +1,6 @@
 "use client";
 
 import React from 'react';
-import PublicNavigation from "@/components/PublicNavigation";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -18,8 +17,6 @@ const Contact = () => {
 
   return (
     <div className="min-h-screen bg-white">
-      <PublicNavigation />
-
       <main className="pt-32 pb-24">
         <div className="max-w-7xl mx-auto px-6 space-y-24">
           <header className="max-w-3xl space-y-6">

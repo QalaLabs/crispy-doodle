@@ -1,7 +1,6 @@
 "use client";
 
 import React, { useState } from 'react';
-import PublicNavigation from "@/components/PublicNavigation";
 import ContentCard from "@/components/ContentCard";
 import ContentFilters from "@/components/ContentFilters";
 import { AnimatePresence } from "framer-motion";
@@ -95,8 +94,6 @@ const InsightsPage = () => {
 
   return (
     <div className="min-h-screen bg-white">
-      <PublicNavigation />
-
       <main className="pt-32 pb-24">
         <div className="max-w-7xl mx-auto px-6 space-y-20">
           {/* Header Section */}

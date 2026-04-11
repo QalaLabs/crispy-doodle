@@ -1,7 +1,6 @@
 "use client";
 
 import React from 'react';
-import PublicNavigation from "@/components/PublicNavigation";
 import Timeline from "@/components/Timeline";
 import PhilosophyGrid from "@/components/PhilosophyGrid";
 import IntegrationSection from "@/components/IntegrationSection";
@@ -12,8 +11,6 @@ import Link from "next/link";
 const About = () => {
   return (
     <div className="min-h-screen bg-white">
-      <PublicNavigation />
-
       <main className="pt-32 pb-24 space-y-32">
         {/* High-Authority Header */}
         <section className="max-w-7xl mx-auto px-6">

@@ -1,7 +1,6 @@
 "use client";
 
 import React from 'react';
-import PublicNavigation from "@/components/PublicNavigation";
 import RetreatCard from "@/components/RetreatCard";
 import CorporateWellness from "@/components/CorporateWellness";
 import SacredCalendar from "@/components/SacredCalendar";
@@ -37,8 +36,6 @@ const RETREATS = [
 const Events = () => {
   return (
     <div className="min-h-screen bg-white">
-      <PublicNavigation />
-
       <main className="space-y-32 pb-32">
         {/* Cinematic Hero */}
         <section className="relative h-[90vh] flex items-center justify-center overflow-hidden rounded-b-[80px] mx-4">

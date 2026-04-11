@@ -1,7 +1,6 @@
 "use client";
 
 import React, { useState } from 'react';
-import PublicNavigation from "@/components/PublicNavigation";
 import ArchitectCard from "@/components/ArchitectCard";
 import ArchitectModal from "@/components/ArchitectModal";
 import { Button } from "@/components/ui/button";
@@ -38,8 +37,6 @@ const Visionaries = () => {
 
   return (
     <div className="min-h-screen bg-white">
-      <PublicNavigation />
-
       <main className="pt-32 pb-24 space-y-32">
         {/* Hero Section */}
         <section className="max-w-7xl mx-auto px-6">
