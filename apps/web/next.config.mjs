@@ -3,8 +3,13 @@ const nextConfig = {
   reactStrictMode: true,
   swcMinify: false,
 
-  // Prevent Next.js from bundling Prisma — let Node.js require it at runtime
-  serverExternalPackages: ['@prisma/client', '@aumveda/db'],
+  experimental: {
+    // Prevent Next.js from bundling Prisma — let Node.js require it at runtime
+    serverComponentsExternalPackages: ['@prisma/client', '@aumveda/db'],
+    // Limit worker processes — prevents EAGAIN on shared hosting
+    workerThreads: false,
+    cpus: 1,
+  },
 
   images: {
     remotePatterns: [
