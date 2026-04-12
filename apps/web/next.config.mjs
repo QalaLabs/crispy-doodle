@@ -1,6 +1,7 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
+  swcMinify: false,
 
   // Prevent Next.js from bundling Prisma — let Node.js require it at runtime
   serverExternalPackages: ['@prisma/client', '@aumveda/db'],
