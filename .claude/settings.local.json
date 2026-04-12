@@ -57,7 +57,11 @@
       "Bash(python3 -c ':*)",
       "Bash(pnpm --filter @aumveda/web add cmdk vaul react-hook-form react-resizable-panels next-themes @radix-ui/react-aspect-ratio)",
       "Bash(node -e \"const r = require\\('react-resizable-panels'\\); console.log\\(Object.keys\\(r\\)\\)\")",
-      "Bash(node -e \"const r = require\\('./node_modules/.pnpm/react-resizable-panels@4.9.3_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/react-resizable-panels/dist/react-resizable-panels.js'\\); console.log\\(Object.keys\\(r\\)\\)\")"
+      "Bash(node -e \"const r = require\\('./node_modules/.pnpm/react-resizable-panels@4.9.3_react-dom@18.3.1_react@18.3.1__react@18.3.1/node_modules/react-resizable-panels/dist/react-resizable-panels.js'\\); console.log\\(Object.keys\\(r\\)\\)\")",
+      "Bash(pnpm --filter @aumveda/web exec tsc --noEmit)",
+      "Bash(node -e \"const l = require\\('./node_modules/.pnpm/lucide-react@0.462.0/node_modules/lucide-react/dist/cjs/lucide-react.js'\\); console.log\\(Object.keys\\(l\\).filter\\(k => k.toLowerCase\\(\\).includes\\('twit'\\) || k.toLowerCase\\(\\).includes\\('instagram'\\) || k.toLowerCase\\(\\).includes\\('youtube'\\) || k.toLowerCase\\(\\).includes\\('social'\\) || k.toLowerCase\\(\\).includes\\('link'\\)\\)\\)\")",
+      "Bash(node -e \"const l = require\\('./apps/web/node_modules/lucide-react'\\); console.log\\(Object.keys\\(l\\).filter\\(k => /twitter|instagram|youtube|facebook|link|share|external/i.test\\(k\\)\\).join\\(', '\\)\\)\")",
+      "Bash(xargs ls:*)"
     ]
   }
 }
