@@ -10,6 +10,7 @@ const nextConfig = {
       { protocol: 'https', hostname: '**.r2.cloudflarestorage.com' },
       { protocol: 'https', hostname: 'assets.aumveda.com' },
       { protocol: 'https', hostname: 'lh3.googleusercontent.com' },
+      { protocol: 'https', hostname: 'images.unsplash.com' },
     ],
   },
 
@@ -30,7 +31,7 @@ const nextConfig = {
               "script-src 'self' 'unsafe-inline' 'unsafe-eval' *.googletagmanager.com *.google-analytics.com",
               "style-src 'self' 'unsafe-inline' fonts.googleapis.com",
               "font-src 'self' fonts.gstatic.com",
-              "img-src 'self' data: blob: *.r2.cloudflarestorage.com assets.aumveda.com lh3.googleusercontent.com",
+              "img-src 'self' data: blob: *.r2.cloudflarestorage.com assets.aumveda.com lh3.googleusercontent.com images.unsplash.com *.unsplash.com",
               "media-src 'self' *.r2.cloudflarestorage.com assets.aumveda.com",
               "frame-src 'self' *.youtube.com *.youtube-nocookie.com",
               "connect-src 'self' *.aumveda.com *.google-analytics.com",
