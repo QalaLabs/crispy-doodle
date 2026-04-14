@@ -5,6 +5,7 @@ import Link from 'next/link'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { ArrowLeft, Hash, Sparkles } from 'lucide-react'
+import LeadMagnetCTA from '@/components/LeadMagnetCTA'
 
 const MOOLANK: Record<number, { title: string; planet: string; traits: string[]; desc: string; color: string }> = {
   1: { title: "The Leader", planet: "Sun ☀️", traits: ["Independent", "Ambitious", "Creative", "Pioneering"], desc: "You are a natural-born leader with tremendous willpower. The Sun blesses you with authority and originality.", color: "bg-amber-50 border-amber-200" },
@@ -97,6 +98,14 @@ export default function NumerologyPage() {
                 </div>
               ))}
             </div>
+
+            <LeadMagnetCTA
+              tool="Numerology"
+              result={`Moolank ${result?.moolank} / Bhagyank ${result?.bhagyank}`}
+              title="Get Your Full Numerology Report — Free"
+              subtitle="Receive a detailed breakdown of your life path, lucky numbers, karmic lessons, and the best periods for important decisions."
+              theme="light"
+            />
 
             <div className="p-6 bg-slate-900 rounded-[32px] text-center space-y-4">
               <p className="text-white font-serif text-lg">Want a personalised numerology reading with Archana Jain?</p>

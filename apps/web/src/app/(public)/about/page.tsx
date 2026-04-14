@@ -36,7 +36,7 @@ const About = () => {
               <h2 className="text-[10px] font-black uppercase tracking-[0.4em] text-[#C79A3B]">The Origin</h2>
               <h3 className="text-4xl font-serif font-bold text-slate-900">Born from the Gap</h3>
               <p className="text-slate-600 leading-relaxed">
-                Aumveda exists because traditional healing is fragmented. Founded by sisters Dr. Sejal Jain
+                Aumveda exists because traditional healing is fragmented. Founded by sisters Sejal Jain
                 and Archana Jain, the system was developed to bridge the void between clinical psychological
                 rigor and the profound accuracy of ancient metaphysical sciences.
               </p>

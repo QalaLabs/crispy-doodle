@@ -2,39 +2,34 @@
 
 import { useState } from 'react'
 import Link from 'next/link'
+import Image from 'next/image'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { Input } from '@/components/ui/input'
-import { ShoppingBag, Search, Star, Filter, ArrowRight, Sparkles, ShieldCheck } from 'lucide-react'
+import { ShoppingBag, Search, Star, ArrowRight, Sparkles, ShieldCheck } from 'lucide-react'
 import { showSuccess } from '@/utils/toast'
+import { PRODUCTS } from '@/lib/products-data'
 
-const CATEGORIES = ['All', 'Crystals', 'Journals', 'Sound', 'Oils & Herbs', 'Courses']
+const CATEGORIES = ['All', 'Bracelets', 'Combos', 'Vastu', 'Crystals', 'Healing']
 
-const PRODUCTS = [
-  { id: 1, name: "Rose Quartz Healing Set", category: "Crystals", price: 2499, originalPrice: 3200, rating: 4.9, reviews: 124, tag: "Bestseller", desc: "A curated set of 5 rose quartz crystals for heart chakra activation and emotional healing.", image: "https://images.unsplash.com/photo-1515023115689-589c33041d3c?auto=format&fit=crop&q=80&w=400" },
-  { id: 2, name: "Aumveda Healing Journal", category: "Journals", price: 899, rating: 4.8, reviews: 89, tag: "New", desc: "Guided prompts for shadow work, gratitude and daily reflection. 180 pages, premium paper.", image: "https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?auto=format&fit=crop&q=80&w=400" },
-  { id: 3, name: "528 Hz Singing Bowl", category: "Sound", price: 4999, originalPrice: 5999, rating: 5.0, reviews: 43, tag: "Premium", desc: "Handcrafted Tibetan singing bowl tuned to 528 Hz — the frequency of DNA repair and cellular healing.", image: "https://images.unsplash.com/photo-1593811167562-9cef47bfc4d7?auto=format&fit=crop&q=80&w=400" },
-  { id: 4, name: "Ashwagandha Rasayana", category: "Oils & Herbs", price: 649, rating: 4.7, reviews: 201, tag: "Organic", desc: "Premium KSM-66 ashwagandha with traditional honey and ghee. 60-day supply.", image: "https://images.unsplash.com/photo-1584308666744-24d5c474f2ae?auto=format&fit=crop&q=80&w=400" },
-  { id: 5, name: "Amethyst Cluster", category: "Crystals", price: 1899, rating: 4.8, reviews: 67, desc: "Natural amethyst cluster for mental clarity, stress relief and enhanced intuition.", image: "https://images.unsplash.com/photo-1518998053901-5348d3961a04?auto=format&fit=crop&q=80&w=400" },
-  { id: 6, name: "Ayurveda Fundamentals", category: "Courses", price: 1999, originalPrice: 4999, rating: 4.9, reviews: 312, tag: "Sale", desc: "12-module video course by Dr. Sejal Jain. Master the ancient science of life.", image: "https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?auto=format&fit=crop&q=80&w=400" },
-  { id: 7, name: "Sacred Sandalwood Oil", category: "Oils & Herbs", price: 799, rating: 4.6, reviews: 88, desc: "Pure Mysore sandalwood essential oil. Grounding, meditative and deeply calming.", image: "https://images.unsplash.com/photo-1608571423902-eed4a5ad8108?auto=format&fit=crop&q=80&w=400" },
-  { id: 8, name: "Selenite Wand Set", category: "Crystals", price: 1299, rating: 4.9, reviews: 55, tag: "Popular", desc: "Set of 3 selenite wands for aura cleansing, chakra clearing and meditation.", image: "https://images.unsplash.com/photo-1500462918059-b1a0cb512f1d?auto=format&fit=crop&q=80&w=400" },
-]
+type Product = typeof PRODUCTS[number]
 
 export default function ShopPage() {
   const [category, setCategory] = useState('All')
   const [search, setSearch] = useState('')
   const [cart, setCart] = useState<Set<number>>(new Set())
 
-  const filtered = PRODUCTS.filter(p =>
+  const filtered = (PRODUCTS as readonly Product[]).filter(p =>
     (category === 'All' || p.category === category) &&
     (!search || p.name.toLowerCase().includes(search.toLowerCase()) || p.desc.toLowerCase().includes(search.toLowerCase()))
   )
 
-  const addToCart = (p: typeof PRODUCTS[0]) => {
+  const addToCart = (p: Product) => {
     setCart(prev => new Set([...prev, p.id]))
     showSuccess(`${p.name} added to cart!`)
   }
+
+  const discount = (p: Product) => p.mrp ? Math.round((1 - p.price / p.mrp) * 100) : 0
 
   return (
     <div className="min-h-screen bg-white pt-32 pb-24">
@@ -51,8 +46,8 @@ export default function ShopPage() {
               <span className="text-amber-600 italic">Apothecary</span>
             </h1>
             <p className="text-lg text-slate-500 leading-relaxed">
-              Crystals, journals, sound instruments, Ayurvedic formulations and online courses —
-              every product chosen to support your healing journey.
+              Crystal bracelets, Vastu items, healing combos and sacred frames —
+              every product chosen to amplify your energy and attract abundance.
             </p>
           </div>
           <div className="flex flex-col sm:flex-row gap-4">
@@ -79,42 +74,69 @@ export default function ShopPage() {
               }`}
             >
               {cat}
+              {cat !== 'All' && (
+                <span className="ml-1.5 opacity-50">
+                  ({(PRODUCTS as readonly Product[]).filter(p => p.category === cat).length})
+                </span>
+              )}
             </button>
           ))}
+          <span className="px-5 py-2.5 text-xs font-black text-slate-400 uppercase tracking-widest">
+            {filtered.length} items
+          </span>
         </div>
 
         {/* Products grid */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
           {filtered.map(p => (
-            <div key={p.id} className="group flex flex-col bg-white rounded-[40px] overflow-hidden shadow-md hover:shadow-2xl transition-all duration-500 hover:-translate-y-1">
-              <div className="aspect-square relative overflow-hidden bg-slate-100">
-                <img src={p.image} alt={p.name} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" />
+            <div key={p.id} className="group flex flex-col bg-white rounded-[32px] overflow-hidden shadow-md hover:shadow-2xl transition-all duration-500 hover:-translate-y-1 border border-slate-100">
+              <div className="aspect-square relative overflow-hidden bg-slate-50">
+                <Image
+                  src={p.img}
+                  alt={p.name}
+                  fill
+                  className="object-cover group-hover:scale-105 transition-transform duration-700"
+                  sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
+                />
                 {p.tag && (
-                  <Badge className="absolute top-4 left-4 bg-slate-900/80 backdrop-blur-sm text-white border-none text-[10px] font-black uppercase tracking-widest">
+                  <Badge className={`absolute top-3 left-3 border-none text-[10px] font-black uppercase tracking-widest ${
+                    p.tag === 'Bestseller' ? 'bg-amber-500 text-white' :
+                    p.tag === 'Sale' ? 'bg-rose-500 text-white' :
+                    p.tag === 'Bundle' ? 'bg-indigo-600 text-white' :
+                    p.tag === 'Certified' ? 'bg-emerald-600 text-white' :
+                    'bg-slate-900 text-white'
+                  }`}>
                     {p.tag}
                   </Badge>
                 )}
+                {discount(p) >= 50 && (
+                  <Badge className="absolute top-3 right-3 bg-rose-500 text-white border-none text-[10px] font-black">
+                    {discount(p)}% OFF
+                  </Badge>
+                )}
               </div>
-              <div className="p-6 flex flex-col flex-1 gap-3">
+              <div className="p-5 flex flex-col flex-1 gap-3">
                 <div>
                   <p className="text-[10px] font-black uppercase tracking-widest text-slate-400 mb-1">{p.category}</p>
-                  <h3 className="font-bold text-slate-900 leading-tight">{p.name}</h3>
+                  <h3 className="font-bold text-slate-900 leading-tight text-sm">{p.name}</h3>
                 </div>
-                <p className="text-xs text-slate-500 leading-relaxed flex-1">{p.desc}</p>
-                <div className="flex items-center gap-2">
-                  <div className="flex items-center gap-1">
-                    {[1,2,3,4,5].map(i => <Star key={i} className={`w-3 h-3 ${i <= Math.floor(p.rating) ? 'text-amber-400 fill-amber-400' : 'text-slate-200 fill-slate-200'}`} />)}
-                  </div>
-                  <span className="text-xs text-slate-400">({p.reviews})</span>
+                <p className="text-xs text-slate-500 leading-relaxed flex-1 line-clamp-3">{p.desc}</p>
+                <div className="flex items-center gap-1 mb-1">
+                  {[1,2,3,4,5].map(i => <Star key={i} className="w-3 h-3 text-amber-400 fill-amber-400" />)}
+                  <span className="text-xs text-slate-400 ml-1">5.0</span>
                 </div>
                 <div className="flex items-center justify-between pt-2 border-t border-slate-50">
                   <div>
-                    <span className="text-xl font-black text-slate-900">₹{p.price.toLocaleString()}</span>
-                    {p.originalPrice && (
-                      <span className="text-xs text-slate-400 line-through ml-2">₹{p.originalPrice.toLocaleString()}</span>
+                    <span className="text-lg font-black text-slate-900">₹{p.price.toLocaleString()}</span>
+                    {p.mrp > p.price && (
+                      <span className="text-xs text-slate-400 line-through ml-2">₹{p.mrp.toLocaleString()}</span>
                     )}
                   </div>
-                  <Button size="sm" onClick={() => addToCart(p)} className={`rounded-xl h-9 font-bold text-xs ${cart.has(p.id) ? 'bg-emerald-600 hover:bg-emerald-700' : 'bg-slate-900 hover:bg-black'}`}>
+                  <Button
+                    size="sm"
+                    onClick={() => addToCart(p)}
+                    className={`rounded-xl h-9 font-bold text-xs ${cart.has(p.id) ? 'bg-emerald-600 hover:bg-emerald-700' : 'bg-slate-900 hover:bg-black'}`}
+                  >
                     {cart.has(p.id) ? '✓ Added' : 'Add to Cart'}
                   </Button>
                 </div>
@@ -126,20 +148,20 @@ export default function ShopPage() {
         {filtered.length === 0 && (
           <div className="text-center py-20 text-slate-400">
             <ShoppingBag className="w-12 h-12 mx-auto mb-4 opacity-20" />
-            <p className="font-medium">No products found for "{search}"</p>
+            <p className="font-medium">No products found for &ldquo;{search}&rdquo;</p>
           </div>
         )}
 
         {/* Trust bar */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           {[
-            { icon: ShieldCheck, title: "Authentically Sourced", desc: "Every crystal and herb is ethically sourced and energetically cleansed." },
-            { icon: Sparkles, title: "Practitioner Curated", desc: "Each product personally selected by Dr. Sejal and Archana Jain." },
-            { icon: ShoppingBag, title: "Secure Checkout", desc: "Cashfree-powered payments with full data encryption." },
+            { icon: ShieldCheck, title: "100% Natural & Authentic", desc: "Every crystal is ethically sourced, lab-certified where mentioned, and energetically cleansed before dispatch." },
+            { icon: Sparkles, title: "Practitioner Curated", desc: "Each product personally selected by Archana Jain for its vibrational alignment and healing potency." },
+            { icon: ShoppingBag, title: "Secure Checkout", desc: "Cashfree-powered payments with full encryption. 7-day return & exchange on all items." },
           ].map(item => (
             <div key={item.title} className="flex gap-4 items-start p-6 bg-slate-50 rounded-3xl">
               <div className="w-10 h-10 rounded-xl bg-white flex items-center justify-center shrink-0 shadow-sm">
-                <item.icon className="w-5 h-5 text-primary" />
+                <item.icon className="w-5 h-5 text-amber-600" />
               </div>
               <div>
                 <h4 className="font-bold text-slate-900 text-sm mb-1">{item.title}</h4>

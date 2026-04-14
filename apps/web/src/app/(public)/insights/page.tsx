@@ -6,86 +6,13 @@ import ContentFilters from "@/components/ContentFilters";
 import { AnimatePresence } from "framer-motion";
 import { Sparkles, ShieldCheck, Search } from "lucide-react";
 import { Button } from "@/components/ui/button";
-
-interface ContentItem {
-  id: number;
-  type: 'blog' | 'news' | 'story';
-  category: string;
-  title: string;
-  excerpt: string;
-  readTime: string;
-  date: string;
-  image: string;
-}
-
-const CONTENT: ContentItem[] = [
-  {
-    id: 1,
-    type: 'blog',
-    category: 'Neuro-Metaphysics',
-    title: "The Neuroscience Behind Manifestation",
-    excerpt: "Exploring how the Reticular Activating System (RAS) and neuroplasticity synchronize with Vedic intention-setting rituals to reprogram the subconscious reality.",
-    readTime: "8 min read",
-    date: "Oct 24, 2023",
-    image: "https://images.unsplash.com/photo-1507413245164-6160d8298b31?auto=format&fit=crop&q=80&w=1000"
-  },
-  {
-    id: 2,
-    type: 'blog',
-    category: 'Environmental Psychology',
-    title: "Why Your Environment is Controlling Your Thoughts",
-    excerpt: "A deep dive into Vastu Shastra and modern spatial psychology. How architectural geometry influences cortisol levels and cognitive load.",
-    readTime: "12 min read",
-    date: "Oct 20, 2023",
-    image: "https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&q=80&w=1000"
-  },
-  {
-    id: 3,
-    type: 'story',
-    category: 'Case Study',
-    title: "Systemic Reset: From Burnout to Flow",
-    excerpt: "How a high-stakes executive utilized the 21-Day Synthesis protocol to recalibrate their parasympathetic nervous system and reclaim cognitive sovereignty.",
-    readTime: "15 min read",
-    date: "Oct 15, 2023",
-    image: "https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?auto=format&fit=crop&q=80&w=1000"
-  },
-  {
-    id: 4,
-    type: 'news',
-    category: 'Brand Update',
-    title: "Aumveda AI: Version 2.0 Launch",
-    excerpt: "Introducing our enhanced proprietary algorithms for real-time synthesis of health metrics and cosmic transits. Now with forensic-level PII redaction.",
-    readTime: "4 min read",
-    date: "Oct 10, 2023",
-    image: "https://images.unsplash.com/photo-1677442136019-21780ecad995?auto=format&fit=crop&q=80&w=1000"
-  },
-  {
-    id: 5,
-    type: 'blog',
-    category: 'Vibrational Medicine',
-    title: "Bioresonance and Cellular Harmony",
-    excerpt: "Understanding the physics of Solfeggio frequencies and their impact on cellular memory and mitochondrial function.",
-    readTime: "10 min read",
-    date: "Oct 05, 2023",
-    image: "https://images.unsplash.com/photo-1518005020250-685948843892?auto=format&fit=crop&q=80&w=1000"
-  },
-  {
-    id: 6,
-    type: 'story',
-    category: 'Case Study',
-    title: "The Architecture of Closure",
-    excerpt: "A multi-dimensional approach to emotional sovereignty following a major life transition, integrating heart-center CBT and spatial Vastu.",
-    readTime: "14 min read",
-    date: "Sep 28, 2023",
-    image: "https://images.unsplash.com/photo-1506126613408-eca07ce68773?auto=format&fit=crop&q=80&w=1000"
-  }
-];
+import { BLOG_POSTS } from "@/lib/blog-posts";
 
 const InsightsPage = () => {
   const [activeTab, setActiveTab] = useState('all');
   const [searchQuery, setSearchQuery] = useState('');
 
-  const filteredContent = CONTENT.filter(item => {
+  const filteredContent = BLOG_POSTS.filter(item => {
     const matchesTab = activeTab === 'all' || item.type === activeTab;
     const matchesSearch = item.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
                          item.excerpt.toLowerCase().includes(searchQuery.toLowerCase());
@@ -132,7 +59,7 @@ const InsightsPage = () => {
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
               <AnimatePresence mode="popLayout">
                 {filteredContent.map((item) => (
-                  <ContentCard key={item.id} {...item} />
+                  <ContentCard key={item.slug} {...item} image={item.image} slug={item.slug} />
                 ))}
               </AnimatePresence>
             </div>

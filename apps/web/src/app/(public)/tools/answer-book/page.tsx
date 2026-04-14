@@ -4,6 +4,7 @@ import { useState } from 'react'
 import Link from 'next/link'
 import { Button } from '@/components/ui/button'
 import { ArrowLeft, BookOpen, Sparkles, RefreshCw } from 'lucide-react'
+import LeadMagnetCTA from '@/components/LeadMagnetCTA'
 import { cn } from '@/lib/utils'
 
 const ANSWERS = [
@@ -119,6 +120,14 @@ export default function AnswerBookPage() {
                 {answer}
               </p>
             </div>
+
+            <LeadMagnetCTA
+              tool="Answer Book"
+              result={answer ?? ''}
+              title="Get Your Full Guidance Report — Free"
+              subtitle="Receive a personalised spiritual guidance document — your question interpreted through Vedic astrology, numerology and intuitive counsel."
+              theme="amber"
+            />
 
             <div className="flex flex-col sm:flex-row gap-4">
               <Button onClick={reset} variant="ghost" className="flex-1 h-12 rounded-xl text-amber-300/70 hover:text-amber-200 border border-amber-700/30 font-bold">

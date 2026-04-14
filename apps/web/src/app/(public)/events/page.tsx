@@ -1,11 +1,11 @@
 "use client";
 
-import React from 'react';
+import React, { useState } from 'react';
 import RetreatCard from "@/components/RetreatCard";
 import CorporateWellness from "@/components/CorporateWellness";
 import SacredCalendar from "@/components/SacredCalendar";
 import { motion } from "framer-motion";
-import { Sparkles, ArrowRight, Quote, Waves, Wind, Flame } from "lucide-react";
+import { Sparkles, ArrowRight, Quote, Waves, Wind, Flame, CheckCircle2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
@@ -33,7 +33,81 @@ const RETREATS = [
   }
 ];
 
+function EventLeadForm({ eventTitle }: { eventTitle: string }) {
+  const [name, setName] = useState('')
+  const [email, setEmail] = useState('')
+  const [phone, setPhone] = useState('')
+  const [loading, setLoading] = useState(false)
+  const [done, setDone] = useState(false)
+  const [error, setError] = useState('')
+
+  async function handleSubmit(e: React.FormEvent) {
+    e.preventDefault()
+    setError('')
+    setLoading(true)
+    try {
+      const res = await fetch('/api/leads', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name, email, tool: 'Events', result: eventTitle, source: 'events_page' }),
+      })
+      if (!res.ok) throw new Error('Failed')
+      setDone(true)
+    } catch {
+      setError('Something went wrong. Please try again.')
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  if (done) {
+    return (
+      <div className="flex flex-col items-center gap-3 py-6 text-center">
+        <CheckCircle2 className="w-10 h-10 text-amber-400" />
+        <p className="text-white font-serif text-lg">You&apos;re on the list!</p>
+        <p className="text-slate-400 text-sm">We&apos;ll reach out with details about <strong className="text-white">{eventTitle}</strong>.</p>
+      </div>
+    )
+  }
+
+  return (
+    <form onSubmit={handleSubmit} className="space-y-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+        <input
+          type="text" required value={name} onChange={e => setName(e.target.value)}
+          placeholder="Your name"
+          className="w-full bg-white/10 border border-white/20 rounded-xl px-4 py-3 text-white placeholder-white/40 text-sm outline-none focus:border-amber-400 transition-colors"
+        />
+        <input
+          type="email" required value={email} onChange={e => setEmail(e.target.value)}
+          placeholder="Email address"
+          className="w-full bg-white/10 border border-white/20 rounded-xl px-4 py-3 text-white placeholder-white/40 text-sm outline-none focus:border-amber-400 transition-colors"
+        />
+      </div>
+      <input
+        type="tel" value={phone} onChange={e => setPhone(e.target.value)}
+        placeholder="Phone number (optional)"
+        className="w-full bg-white/10 border border-white/20 rounded-xl px-4 py-3 text-white placeholder-white/40 text-sm outline-none focus:border-amber-400 transition-colors"
+      />
+      <input
+        type="text" readOnly value={eventTitle}
+        className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-amber-300 text-sm font-bold"
+      />
+      {error && <p className="text-red-400 text-xs">{error}</p>}
+      <Button
+        type="submit" disabled={loading}
+        className="w-full h-12 bg-amber-500 hover:bg-amber-400 text-white rounded-xl font-bold"
+      >
+        {loading ? 'Registering…' : <><Sparkles className="w-4 h-4 mr-2" /> Reserve My Spot</>}
+      </Button>
+      <p className="text-center text-[10px] text-white/30">No spam. We&apos;ll only contact you about this event.</p>
+    </form>
+  )
+}
+
 const Events = () => {
+  const [activeEventForm, setActiveEventForm] = useState<string | null>(null)
+
   return (
     <div className="min-h-screen bg-white">
       <main className="space-y-32 pb-32">
@@ -151,18 +225,58 @@ const Events = () => {
           </div>
         </section>
 
-        {/* Final CTA */}
-        <section className="max-w-7xl mx-auto px-6 text-center space-y-12">
-          <h2 className="text-4xl md:text-6xl font-serif font-bold text-slate-900">
-            Ready to <span className="text-amber-600 italic">Immerse?</span>
-          </h2>
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-6">
-            <Button asChild className="h-16 px-12 rounded-2xl bg-slate-900 hover:bg-black text-white font-bold text-lg shadow-2xl shadow-slate-200">
-              <Link href="/contact">Book a Discovery Call</Link>
-            </Button>
-            <Button asChild variant="ghost" className="h-16 px-10 rounded-2xl border border-slate-200 font-bold text-lg">
-              <Link href="/services">Explore Modalities</Link>
-            </Button>
+        {/* Final CTA with event lead form */}
+        <section className="max-w-5xl mx-auto px-6 space-y-12">
+          <div className="p-12 bg-slate-900 rounded-[60px] space-y-10">
+            <div className="text-center space-y-4">
+              <h2 className="text-4xl md:text-5xl font-serif font-bold text-white">
+                Ready to <span className="text-amber-400 italic">Immerse?</span>
+              </h2>
+              <p className="text-slate-400 max-w-xl mx-auto">
+                Register your interest and our team will reach out with full programme details, pricing and availability.
+              </p>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+              {[
+                "C-Suite Sanctuary: Himalayan Peak",
+                "The Emotional Reset: Coastal Stillness",
+                "Discovery Call — Not sure yet",
+              ].map(event => (
+                <button
+                  key={event}
+                  onClick={() => setActiveEventForm(event)}
+                  className={cn(
+                    "px-4 py-3 rounded-2xl text-sm font-bold transition-all border",
+                    activeEventForm === event
+                      ? "bg-amber-500 border-amber-400 text-white"
+                      : "bg-white/5 border-white/10 text-slate-300 hover:bg-white/10"
+                  )}
+                >
+                  {event}
+                </button>
+              ))}
+            </div>
+
+            {activeEventForm && (
+              <div className="bg-white/5 border border-white/10 rounded-[32px] p-8">
+                <p className="text-amber-400 text-xs font-black uppercase tracking-widest mb-6">
+                  Register Interest — {activeEventForm}
+                </p>
+                <EventLeadForm eventTitle={activeEventForm} />
+              </div>
+            )}
+
+            {!activeEventForm && (
+              <div className="flex flex-col sm:flex-row items-center justify-center gap-6">
+                <Button asChild className="h-14 px-10 rounded-2xl bg-amber-500 hover:bg-amber-400 text-white font-bold text-lg">
+                  <Link href="/contact?service=retreat">Book a Discovery Call</Link>
+                </Button>
+                <Button asChild variant="ghost" className="h-14 px-8 rounded-2xl border border-white/10 text-white font-bold">
+                  <Link href="/services">Explore Modalities <ArrowRight className="ml-2 w-4 h-4" /></Link>
+                </Button>
+              </div>
+            )}
           </div>
         </section>
       </main>

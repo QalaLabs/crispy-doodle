@@ -5,6 +5,7 @@ import Link from 'next/link'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { ArrowLeft, Sun, Star, Sparkles, ArrowRight } from 'lucide-react'
+import LeadMagnetCTA from '@/components/LeadMagnetCTA'
 
 const PLANETS = ["Sun ☀️", "Moon 🌙", "Mars ♂", "Mercury ☿", "Jupiter ♃", "Venus ♀", "Saturn ♄", "Rahu ☊", "Ketu ☋"]
 const SIGNS = ["Aries", "Taurus", "Gemini", "Cancer", "Leo", "Virgo", "Libra", "Scorpio", "Sagittarius", "Capricorn", "Aquarius", "Pisces"]
@@ -151,6 +152,14 @@ export default function KundliPage() {
                 <p className="text-slate-400 text-sm leading-relaxed">Your current planetary period shapes the themes and opportunities of this chapter of your life.</p>
               </div>
             </div>
+
+            <LeadMagnetCTA
+              tool="Kundli"
+              result={chart ? `${chart.lagna} Lagna / ${chart.moonSign} Moon / ${chart.dasha}` : ''}
+              title="Get Your Full Kundli Report — Free"
+              subtitle="Receive your complete birth chart interpretation: planetary strengths, current dasha predictions, yoga analysis, and remedies tailored to your chart."
+              theme="light"
+            />
 
             <div className="p-8 bg-orange-50 rounded-[32px] border border-orange-100 flex flex-col md:flex-row items-center justify-between gap-6">
               <div>
