@@ -1,6 +1,7 @@
 "use client";
 
-import React from 'react';
+import React, { useState, useEffect, Suspense } from 'react';
+import { useSearchParams } from 'next/navigation';
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -9,11 +10,94 @@ import { Textarea } from "@/components/ui/textarea";
 import { Mail, Phone, MapPin, Send, Sparkles } from "lucide-react";
 import { showSuccess } from "@/utils/toast";
 
+const SERVICES = [
+  { value: "", label: "Select a service…" },
+  // Sejal Jain — Psychological
+  { value: "cbt", label: "CBT (Cognitive Reframing System)" },
+  { value: "hypnosis", label: "Hypnosis — Subconscious Rewiring" },
+  { value: "sound-therapy", label: "Sound Therapy — Frequency Regulation" },
+  { value: "breathwork", label: "Breathwork — Nervous System Reset" },
+  { value: "talk-therapy", label: "Talk Therapy — Conscious Processing" },
+  { value: "bioresonance", label: "Bioresonance Frequency Therapy" },
+  { value: "behavior-dosing", label: "Behavior Dosing — Daily Healing Protocol" },
+  // Archana Jain — Cosmic
+  { value: "astrology", label: "Astrology — Vedic + Western Synthesis" },
+  { value: "tarot", label: "Tarot / Angel Cards — Intuitive Guidance" },
+  { value: "vastu", label: "Vastu Shastra — Space Harmonisation" },
+  { value: "crystallomancy", label: "Crystallomancy — Vibrational Alignment" },
+  // Programs
+  { value: "21-day-synthesis", label: "The 21-Day Synthesis Program" },
+  { value: "cosmic-alignment", label: "The Cosmic Alignment (3-Month)" },
+  { value: "executive-sanctuary", label: "Executive Sanctuary — Elite Program" },
+  // Events
+  { value: "retreat", label: "Retreat / Immersion" },
+  { value: "corporate-wellness", label: "Corporate Wellness" },
+  { value: "workshop", label: "Workshop / Micro-Immersion" },
+  // General
+  { value: "discovery-call", label: "Discovery Call — Not sure yet" },
+]
+
+const SERVICE_PARAM_MAP: Record<string, string> = {
+  astrology: "astrology",
+  tarot: "tarot",
+  vastu: "vastu",
+  "vastu-consultation": "vastu",
+  "vastu-shastra": "vastu",
+  crystallomancy: "crystallomancy",
+  cbt: "cbt",
+  hypnosis: "hypnosis",
+  "sound-therapy": "sound-therapy",
+  sound: "sound-therapy",
+  breathwork: "breathwork",
+  "talk-therapy": "talk-therapy",
+  bioresonance: "bioresonance",
+  "behavior-dosing": "behavior-dosing",
+  "21-day": "21-day-synthesis",
+  "cosmic-alignment": "cosmic-alignment",
+  "executive-sanctuary": "executive-sanctuary",
+  retreat: "retreat",
+  "corporate-wellness": "corporate-wellness",
+  workshop: "workshop",
+  discovery: "discovery-call",
+  kundli: "astrology",
+  numerology: "astrology",
+  mbti: "cbt",
+  "answer-book": "discovery-call",
+}
+
+function ServiceSelector({ service, setService }: { service: string; setService: (v: string) => void }) {
+  const searchParams = useSearchParams()
+
+  useEffect(() => {
+    const param = searchParams.get("service")?.toLowerCase() ?? ""
+    if (param && SERVICE_PARAM_MAP[param]) {
+      setService(SERVICE_PARAM_MAP[param])
+    }
+  }, [searchParams, setService])
+
+  return (
+    <select
+      id="service"
+      value={service}
+      onChange={e => setService(e.target.value)}
+      className="w-full h-12 rounded-xl border border-slate-200 px-4 text-sm focus:ring-2 focus:ring-amber-500 outline-none bg-white"
+    >
+      {SERVICES.map(s => (
+        <option key={s.value} value={s.value}>
+          {s.label}
+        </option>
+      ))}
+    </select>
+  )
+}
+
 const Contact = () => {
+  const [service, setService] = useState("")
+
   const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    showSuccess("Your message has been sent to our sanctuary.");
-  };
+    e.preventDefault()
+    showSuccess("Your message has been sent to our sanctuary.")
+  }
 
   return (
     <div className="min-h-screen bg-white">
@@ -100,13 +184,18 @@ const Contact = () => {
                     </div>
                   </div>
                   <div className="space-y-2">
+                    <Label htmlFor="phone">Phone (optional)</Label>
+                    <Input id="phone" type="tel" placeholder="+91 98765 43210" className="rounded-xl h-12 border-slate-200" />
+                  </div>
+                  <div className="space-y-2">
                     <Label htmlFor="service">Interested Service</Label>
-                    <select id="service" className="w-full h-12 rounded-xl border border-slate-200 px-4 text-sm focus:ring-2 focus:ring-amber-500 outline-none bg-white">
-                      <option>Psychological Wellness (CBT)</option>
-                      <option>Cosmic Guidance (Astrology)</option>
-                      <option>Vibrational Healing (Sound)</option>
-                      <option>Vastu Consultation</option>
-                    </select>
+                    <Suspense fallback={
+                      <select className="w-full h-12 rounded-xl border border-slate-200 px-4 text-sm bg-white">
+                        <option>Select a service…</option>
+                      </select>
+                    }>
+                      <ServiceSelector service={service} setService={setService} />
+                    </Suspense>
                   </div>
                   <div className="space-y-2">
                     <Label htmlFor="message">Your Message</Label>
@@ -122,7 +211,7 @@ const Contact = () => {
         </div>
       </main>
     </div>
-  );
-};
+  )
+}
 
 export default Contact;

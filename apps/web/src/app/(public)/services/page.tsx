@@ -183,18 +183,39 @@ const Services = () => {
               <span className="text-amber-600 italic">Holistic Transcendence</span>
             </h1>
             <p className="text-xl text-slate-500 leading-relaxed max-w-2xl">
-              Our services are not mere treatments, but sacred rituals of transformation designed to
-              harmonize your internal landscape with the cosmic order.
+              Two pillars. One system. Archana Jain maps your cosmic blueprint through Astrology, Vastu,
+              and Vedic sciences. Sejal Jain rewires it through CBT, hypnosis, and sound therapy.
+              Together, they deliver what neither tradition can achieve alone.
             </p>
           </header>
+
+          {/* Archana Section — FIRST (senior founder) */}
+          <section className="space-y-16">
+            <div className="flex flex-col md:flex-row justify-between items-end gap-8 border-b border-slate-100 pb-12">
+              <div className="space-y-4">
+                <h2 className="text-[10px] font-black uppercase tracking-[0.4em] text-amber-600">The Eastern Pillar</h2>
+                <h3 className="text-4xl md:text-5xl font-serif font-bold text-slate-900">Archana Jain</h3>
+                <p className="text-slate-500 font-medium">Astrology · Vastu · Tarot · Crystallomancy</p>
+              </div>
+              <div className="flex items-center gap-3 text-amber-600 font-bold text-sm">
+                <Sparkles className="w-5 h-5" />
+                Ancient Wisdom Precisely Applied
+              </div>
+            </div>
+            <div className="grid grid-cols-1 gap-6">
+              {ARCHANA_SERVICES.map((service, i) => (
+                <ServiceCard key={i} {...service} />
+              ))}
+            </div>
+          </section>
 
           {/* Sejal Section */}
           <section className="space-y-16">
             <div className="flex flex-col md:flex-row justify-between items-end gap-8 border-b border-slate-100 pb-12">
               <div className="space-y-4">
-                <h2 className="text-[10px] font-black uppercase tracking-[0.4em] text-blue-600">The Psychological Pillar</h2>
+                <h2 className="text-[10px] font-black uppercase tracking-[0.4em] text-blue-600">The Western Pillar</h2>
                 <h3 className="text-4xl md:text-5xl font-serif font-bold text-slate-900">Sejal Jain</h3>
-                <p className="text-slate-500 font-medium">Psychological + Subconscious Healing</p>
+                <p className="text-slate-500 font-medium">CBT · Hypnosis · Sound Therapy · Breathwork</p>
               </div>
               <div className="flex items-center gap-3 text-blue-600 font-bold text-sm">
                 <ShieldCheck className="w-5 h-5" />
@@ -203,26 +224,6 @@ const Services = () => {
             </div>
             <div className="grid grid-cols-1 gap-6">
               {SEJAL_SERVICES.map((service, i) => (
-                <ServiceCard key={i} {...service} />
-              ))}
-            </div>
-          </section>
-
-          {/* Archana Section */}
-          <section className="space-y-16">
-            <div className="flex flex-col md:flex-row justify-between items-end gap-8 border-b border-slate-100 pb-12">
-              <div className="space-y-4">
-                <h2 className="text-[10px] font-black uppercase tracking-[0.4em] text-amber-600">The Cosmic Pillar</h2>
-                <h3 className="text-4xl md:text-5xl font-serif font-bold text-slate-900">Archana Jain</h3>
-                <p className="text-slate-500 font-medium">Cosmic + Environmental Guidance</p>
-              </div>
-              <div className="flex items-center gap-3 text-amber-600 font-bold text-sm">
-                <Sparkles className="w-5 h-5" />
-                Navigating the Celestial Currents
-              </div>
-            </div>
-            <div className="grid grid-cols-1 gap-6">
-              {ARCHANA_SERVICES.map((service, i) => (
                 <ServiceCard key={i} {...service} />
               ))}
             </div>

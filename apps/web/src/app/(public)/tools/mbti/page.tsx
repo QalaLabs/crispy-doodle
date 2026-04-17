@@ -4,6 +4,7 @@ import { useState } from 'react'
 import Link from 'next/link'
 import { Button } from '@/components/ui/button'
 import { ArrowLeft, ArrowRight, RotateCcw, Sparkles } from 'lucide-react'
+import LeadMagnetCTA from '@/components/LeadMagnetCTA'
 import { cn } from '@/lib/utils'
 
 const QUESTIONS = [
@@ -135,6 +136,14 @@ export default function MBTIPage() {
                 ))}
               </div>
             </div>
+
+            <LeadMagnetCTA
+              tool="MBTI"
+              result={result ?? ''}
+              title="Get Your Full Personality Report — Free"
+              subtitle={`Receive a deep-dive analysis of your ${result} type: career paths, relationship patterns, growth areas and a Vedic psychological overlay.`}
+              theme="light"
+            />
 
             <div className="flex flex-col sm:flex-row gap-4">
               <Button onClick={reset} variant="outline" className="flex-1 h-12 rounded-xl border-slate-200 font-bold">

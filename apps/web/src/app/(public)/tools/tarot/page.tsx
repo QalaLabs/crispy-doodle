@@ -4,6 +4,7 @@ import { useState } from 'react'
 import Link from 'next/link'
 import { Button } from '@/components/ui/button'
 import { ArrowLeft, RefreshCw, Sparkles, Star } from 'lucide-react'
+import LeadMagnetCTA from '@/components/LeadMagnetCTA'
 import { cn } from '@/lib/utils'
 
 const CARDS = [
@@ -141,6 +142,14 @@ export default function TarotPage() {
                 <p className="text-white leading-relaxed">{isReversed ? drawn.reversed : drawn.upright}</p>
               </div>
             </div>
+
+            <LeadMagnetCTA
+              tool="Tarot"
+              result={drawn?.name ?? ''}
+              title="Get Your Full Card Reading — Free"
+              subtitle={`Receive a complete interpretation of ${drawn?.name}, including how it applies to love, career, and your spiritual path right now.`}
+              theme="dark"
+            />
 
             <div className="flex gap-4">
               <Button onClick={reset} variant="ghost" className="flex-1 h-12 rounded-xl text-slate-400 hover:text-white border border-white/10 font-bold">

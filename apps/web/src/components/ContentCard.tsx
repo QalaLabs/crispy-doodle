@@ -1,6 +1,7 @@
 "use client";
 
 import React from 'react';
+import Link from 'next/link';
 import { motion } from 'framer-motion';
 import { ArrowRight, Clock, ShieldCheck } from 'lucide-react';
 import { Badge } from "@/components/ui/badge";
@@ -14,9 +15,10 @@ interface ContentCardProps {
   image: string;
   type: 'blog' | 'news' | 'story';
   date: string;
+  slug?: string;
 }
 
-const ContentCard: React.FC<ContentCardProps> = ({ title, excerpt, category, readTime, image, type, date }) => {
+const ContentCard: React.FC<ContentCardProps> = ({ title, excerpt, category, readTime, image, type, date, slug }) => {
   const getTypeStyles = () => {
     switch (type) {
       case 'blog': return "bg-blue-50 text-blue-600 border-blue-100";
@@ -26,15 +28,8 @@ const ContentCard: React.FC<ContentCardProps> = ({ title, excerpt, category, rea
     }
   };
 
-  return (
-    <motion.div
-      layout
-      initial={{ opacity: 0, y: 20 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true }}
-      whileHover={{ y: -8 }}
-      className="group cursor-pointer bg-white rounded-[40px] overflow-hidden border border-slate-100 shadow-sm hover:shadow-2xl transition-all duration-500 flex flex-col h-full"
-    >
+  const inner = (
+    <>
       <div className="aspect-[16/10] overflow-hidden relative">
         <img
           src={image}
@@ -77,6 +72,23 @@ const ContentCard: React.FC<ContentCardProps> = ({ title, excerpt, category, rea
           )}
         </div>
       </div>
+    </>
+  )
+
+  return (
+    <motion.div
+      layout
+      initial={{ opacity: 0, y: 20 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true }}
+      whileHover={{ y: -8 }}
+      className="group cursor-pointer bg-white rounded-[40px] overflow-hidden border border-slate-100 shadow-sm hover:shadow-2xl transition-all duration-500 flex flex-col h-full"
+    >
+      {slug ? (
+        <Link href={`/insights/${slug}`} className="flex flex-col h-full">
+          {inner}
+        </Link>
+      ) : inner}
     </motion.div>
   );
 };
