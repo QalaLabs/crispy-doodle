@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@aumveda/db'
 import bcrypt from 'bcryptjs'
 import { z } from 'zod'
+import { supabase } from '@/lib/supabase'
 
 const schema = z.object({
   name: z.string().min(1).max(100),
@@ -23,26 +24,45 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: 'An account with this email already exists.' }, { status: 409 })
   }
 
-  const passwordHash = await bcrypt.hash(password, 12)
-
-  const user = await prisma.user.create({
-    data: {
-      name,
+  try {
+    // Create user in Supabase Auth
+    const { data: authData, error: authError } = await supabase.auth.signUp({
       email,
-      passwordHash,
-      profile: { create: {} },
-    },
-    select: { id: true, email: true, name: true },
-  })
+      password,
+    })
 
-  await prisma.event.create({
-    data: {
-      userId: user.id,
-      eventName: 'sign_up',
-      payload: { email: user.email, method: 'credentials' },
-      source: 'server',
-    },
-  })
+    if (authError) {
+      return NextResponse.json({ error: authError.message }, { status: 400 })
+    }
 
-  return NextResponse.json({ ok: true, userId: user.id }, { status: 201 })
+    if (!authData.user) {
+      return NextResponse.json({ error: 'Failed to create auth user.' }, { status: 500 })
+    }
+
+    const passwordHash = await bcrypt.hash(password, 12)
+
+    const user = await prisma.user.create({
+      data: {
+        name,
+        email,
+        passwordHash,
+        profile: { create: {} },
+      },
+      select: { id: true, email: true, name: true },
+    })
+
+    await prisma.event.create({
+      data: {
+        userId: user.id,
+        eventName: 'sign_up',
+        payload: { email: user.email, method: 'credentials' },
+        source: 'server',
+      },
+    })
+
+    return NextResponse.json({ ok: true, userId: user.id }, { status: 201 })
+  } catch (error) {
+    console.error('Registration error:', error)
+    return NextResponse.json({ error: 'An error occurred during registration.' }, { status: 500 })
+  }
 }

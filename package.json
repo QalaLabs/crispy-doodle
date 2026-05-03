@@ -33,5 +33,8 @@
       "prisma",
       "unrs-resolver"
     ]
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "^2.105.1"
   }
 }
