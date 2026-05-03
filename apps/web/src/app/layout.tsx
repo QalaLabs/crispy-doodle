@@ -7,6 +7,11 @@ const playfair = Playfair_Display({ subsets: ['latin'], variable: '--font-serif'
 const montserrat = Montserrat({ subsets: ['latin'], variable: '--font-sans', display: 'swap' })
 const lato = Lato({ subsets: ['latin'], weight: ['400', '700'], variable: '--font-body', display: 'swap' })
 
+export const viewport = {
+  width: 'device-width',
+  initialScale: 1,
+}
+
 export const metadata: Metadata = {
   title: {
     template: '%s | Aumveda',

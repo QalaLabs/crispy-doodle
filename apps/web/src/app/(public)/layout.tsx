@@ -1,6 +1,8 @@
 "use client"
 
-import PublicNavigation from '@/components/PublicNavigation'
+import dynamic from 'next/dynamic'
+
+const PublicNavigation = dynamic(() => import('@/components/PublicNavigation'), { ssr: false })
 import Image from 'next/image'
 import Link from 'next/link'
 import { Mail, Phone, MapPin, Globe, PlayCircle } from 'lucide-react'
