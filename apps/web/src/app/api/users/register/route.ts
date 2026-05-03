@@ -26,18 +26,23 @@ export async function POST(req: NextRequest) {
 
   try {
     // Create user in Supabase Auth
+    console.log('Creating Supabase user for:', email)
     const { data: authData, error: authError } = await supabase.auth.signUp({
       email,
       password,
     })
 
     if (authError) {
+      console.error('Supabase auth error:', authError)
       return NextResponse.json({ error: authError.message }, { status: 400 })
     }
 
     if (!authData.user) {
+      console.error('No user returned from Supabase signup')
       return NextResponse.json({ error: 'Failed to create auth user.' }, { status: 500 })
     }
+
+    console.log('Supabase user created:', authData.user.id)
 
     const passwordHash = await bcrypt.hash(password, 12)
 
@@ -63,6 +68,7 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ ok: true, userId: user.id }, { status: 201 })
   } catch (error) {
     console.error('Registration error:', error)
-    return NextResponse.json({ error: 'An error occurred during registration.' }, { status: 500 })
+    const errorMessage = error instanceof Error ? error.message : 'An error occurred during registration.'
+    return NextResponse.json({ error: errorMessage }, { status: 500 })
   }
 }
