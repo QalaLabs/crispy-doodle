@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@aumveda/db'
 import bcrypt from 'bcryptjs'
 import { z } from 'zod'
-import { supabase } from '@/lib/supabase'
+import { supabase, supabaseConfigured } from '@/lib/supabase'
 
 const schema = z.object({
   name: z.string().min(1).max(100),
@@ -25,6 +25,10 @@ export async function POST(req: NextRequest) {
   }
 
   try {
+    if (!supabaseConfigured) {
+      return NextResponse.json({ error: 'Auth service is not configured. Please contact support.' }, { status: 503 })
+    }
+
     // Create user in Supabase Auth
     console.log('Creating Supabase user for:', email)
     const { data: authData, error: authError } = await supabase.auth.signUp({
